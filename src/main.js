@@ -16,7 +16,17 @@ const scene = new THREE.Scene();
 // geometry toward white, matching the page's actual white background.
 scene.fog = new THREE.Fog(0xffffff, 9, 22);
 
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+// #app isn't always the full viewport — in portrait (see style.css) it's
+// a left column beside the shelf-info blurb, so the renderer/camera are
+// sized off #app's own box rather than window.innerWidth/innerHeight.
+// That single indirection is what makes the 3D scene correctly fit
+// whatever box CSS actually gives it, on any screen shape.
+const appEl = document.getElementById("app");
+function getViewportSize() {
+  return { width: appEl.clientWidth, height: appEl.clientHeight };
+}
+
+const camera = new THREE.PerspectiveCamera(45, getViewportSize().width / getViewportSize().height, 0.1, 100);
 
 // antialias off + a capped pixel ratio + cheaper (non-soft) shadow
 // filtering are the standard three.js levers for GPU fragment-shading
@@ -26,7 +36,7 @@ const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerH
 // CPU-side in the render loop.
 const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
 renderer.setClearColor(0xffffff, 0);
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(getViewportSize().width, getViewportSize().height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -1338,7 +1348,18 @@ const pageThickness = 0.0018; // paper-thin — a 50-page pile should stay slim,
 const sceneBottomY = Math.min(cabinetFloorY - legHeight, arrowY) - 0.4;
 const sceneCenterY = (cabinetTopEdgeY + sceneBottomY) / 2;
 const sceneHeight = cabinetTopEdgeY - sceneBottomY;
-const sceneWidth = Math.max(outerWidth, (arrowGapFromCenter + arrowWidth / 2) * 2);
+
+// keyLight is a directional light, so a point at height h casts its
+// shadow offset horizontally by h * (light.x / light.y) from directly
+// below it — the cabinet's own top edge casts the furthest-reaching
+// shadow, well past outerWidth or the arrows. Without this, a narrow
+// (portrait-column) camera fit the solid geometry tightly enough that
+// this shadow got clipped by the edge of the frame, reading as a
+// visible box drawn around the shelf. Padding by twice the offset
+// covers either horizontal direction, since which side actually needs
+// it depends on which way the carousel currently has the shelf turned.
+const shadowOffsetX = Math.abs(cabinetTopEdgeY * (keyLight.position.x / keyLight.position.y));
+const sceneWidth = Math.max(outerWidth, (arrowGapFromCenter + arrowWidth / 2) * 2) + shadowOffsetX * 2;
 
 // An open two-page spread's rough footprint, for fitting the reading
 // camera the same way the overview camera fits the cabinet below —
@@ -1735,9 +1756,12 @@ function openPaperView(paper) {
   paperViewGroup.visible = true;
   controls.enabled = false;
 
-  // In portrait (see style.css), body.reading-active hides #shelf-info
-  // so it doesn't clutter the reading toolbar's corner of the screen.
+  // In portrait (see style.css), body.reading-active expands #app from
+  // its usual left column to the full width — the open view needs the
+  // room to be legible. refitCameraFraming() picks that new box up
+  // before the tween below captures readingCameraPos as its end value.
   document.body.classList.add("reading-active");
+  refitCameraFraming();
 
   gsap.to(camera.position, { ...readingCameraPos, duration: 0.8, ease: "power2.inOut" });
   gsap.to(controls.target, { ...readingTarget, duration: 0.8, ease: "power2.inOut" });
@@ -1750,6 +1774,7 @@ function closePaperView() {
   controls.enabled = true;
 
   document.body.classList.remove("reading-active");
+  refitCameraFraming();
 
   gsap.to(camera.position, { ...overviewCameraPos, duration: 0.8, ease: "power2.inOut" });
   gsap.to(controls.target, { ...overviewTarget, duration: 0.8, ease: "power2.inOut" });
@@ -1835,8 +1860,11 @@ function openBook(book) {
     },
   });
 
-  // See the matching comment in openPaperView.
+  // See the matching comment in openPaperView — expands #app to full
+  // width in portrait so the open spread has room to be legible, and
+  // refits readingCameraPos to that box before it's captured below.
   document.body.classList.add("reading-active");
+  refitCameraFraming();
 
   gsap.to(camera.position, { ...readingCameraPos, duration: 0.55, ease: "power2.inOut" });
   gsap.to(controls.target, { ...readingTarget, duration: 0.55, ease: "power2.inOut" });
@@ -1854,6 +1882,7 @@ function closeBook() {
   });
 
   document.body.classList.remove("reading-active");
+  refitCameraFraming();
 
   gsap.to(camera.position, { ...overviewCameraPos, duration: 0.8, ease: "power2.inOut" });
   gsap.to(controls.target, { ...overviewTarget, duration: 0.8, ease: "power2.inOut" });
@@ -2196,17 +2225,20 @@ renderer.domElement.addEventListener("pointermove", onPointerMove);
 // 12. RESIZE HANDLING + RENDER LOOP
 // -----------------------------------------------------------------------
 
-// Re-fits the renderer/camera/framing distances to #app's current box —
-// #app is always full-bleed (same as desktop; see style.css) so this
-// only actually changes anything on a real resize/orientation change,
-// handled below. Deliberately doesn't touch camera.position/
-// controls.target itself, so section 8/8b's own gsap tweens (toward
-// readingCameraPos/overviewCameraPos) keep working exactly as they did
-// before portrait layout existed.
+// Re-fits the renderer/camera/framing distances to #app's current box.
+// Deliberately doesn't touch camera.position/controls.target itself —
+// section 8/8b's openBook/closePaperView etc. call this right after
+// toggling body.reading-active (whose CSS resizes #app instantly, with
+// nothing else to tell three.js that happened) and then run their own
+// gsap tween toward the now-correct readingCameraPos, exactly as they
+// already did before portrait layout existed. Calling this first just
+// makes sure that tween is animating toward the right distance instead
+// of whatever #app's previous box implied.
 function refitCameraFraming() {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  const { width, height } = getViewportSize();
+  camera.aspect = width / height;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width, height);
   updateCameraFraming();
 }
 

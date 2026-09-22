@@ -232,26 +232,36 @@ canvas {
 }
 
 /* ---------------------------------------------------------------
-   Portrait layout (phones, and an iPad held upright): the canvas STAYS
-   full-bleed, exactly like desktop (see #app above — no override here
-   at all) — an earlier version of this boxed the canvas into a left/
-   right column instead, which clipped the shelf's cast shadow against
-   a hard edge and read as a visible "frame" around it. Full-bleed
-   avoids that entirely, the same way desktop never has the problem.
-   Only the floating text overlays move: the hero becomes a centered
-   top banner instead of left-middle (see #hero below), and #shelf-info
-   keeps the base rule's right-side, vertically-centered position
-   above — only its column width needs widening here, since 26vw (tuned
-   for a wide desktop window) would squeeze a phone-width paragraph
-   down to a handful of characters per line.
+   Portrait layout (phones, and an iPad held upright): the desktop
+   arrangement — hero and shelf-info floating left/right of a full-bleed,
+   centered canvas — reads badly on a narrow-tall screen, so #main-row
+   (see index.html) becomes a real flex row instead: the hero becomes a
+   centered top banner, the canvas (the bookshelf) keeps the left
+   column, and the shelf blurb takes the right column beside it,
+   vertically centered the same way it is on desktop (compare
+   #shelf-info above, outside this media query). #main-row is
+   `display: contents` by default (see above the media query) so it's
+   invisible to layout on desktop — both children stay exactly as they
+   were.
+
+   While a book/paper is open (main.js toggles body.reading-active), the
+   canvas takes the full width instead — the open-book spread needs the
+   room to be legible, which is the whole point of this layout pass.
+
+   A boxed-off column like this clips anything that pokes past its
+   edge, including the shelf's own cast shadow — see the shadowOffsetX
+   comment by sceneWidth in main.js for the fix that keeps that shadow
+   from reading as a visible "frame" around the shelf.
 
    .nav-arrow (children of #app — see index.html): the floor-mounted 3D
    arrows are fiddly to tap precisely and main.js hides them in portrait
    (see the portraitQuery handling there); these plain, always-in-the-
-   same-spot buttons replace them for touch. Positioned absolute inside
-   #app, which — full-bleed again — puts them flush against the actual
-   screen edges.
+   same-spot buttons replace them for touch.
    --------------------------------------------------------------- */
+
+#main-row {
+  display: contents;
+}
 
 .nav-arrow {
   display: none; /* shown only in portrait, below */
@@ -283,15 +293,23 @@ canvas {
 }
 
 @media (orientation: portrait) {
+  body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh; /* overrides the line above in browsers that support it — accounts for a mobile browser's address bar showing/hiding instead of jumping the layout under it */
+  }
+
   #hero {
-    top: 0;
+    position: static;
+    top: auto;
     transform: none;
     align-items: center;
     justify-content: flex-start;
     text-align: center;
+    flex: none;
     /* env() covers a notch; the flat 20px is what actually clears a
-       mobile browser's own address bar sitting on top of this
-       fixed-position banner. */
+       mobile browser's own address bar sitting on top of the hero. */
     padding: calc(env(safe-area-inset-top, 0px) + 20px) 6vw 12px;
   }
 
@@ -304,13 +322,41 @@ canvas {
     max-width: 100%;
   }
 
+  #main-row {
+    display: flex;
+    flex: 1;
+    min-height: 0; /* let #app/#shelf-info size within the remaining space instead of overflowing it */
+  }
+
+  #app {
+    position: relative; /* so .nav-arrow (absolute) hugs THIS column's edges, not the viewport's */
+    inset: auto;
+    flex: 0 0 55%;
+    min-width: 0;
+  }
+
+  #shelf-info {
+    position: static;
+    top: auto;
+    transform: none;
+    flex: 1;
+    min-width: 0;
+    align-items: flex-start;
+    justify-content: center; /* vertically centered alongside the shelf, same as desktop */
+    padding: 20px 5vw;
+  }
+
   #shelf-info-header,
   #shelf-info-body {
-    width: 82vw;
+    width: 100%;
   }
 
   .nav-arrow {
     display: flex;
+  }
+
+  body.reading-active #app {
+    flex-basis: 100%;
   }
 
   body.reading-active #shelf-info {
