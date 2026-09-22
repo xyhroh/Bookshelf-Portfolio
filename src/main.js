@@ -1365,8 +1365,11 @@ const sceneWidth = Math.max(outerWidth, (arrowGapFromCenter + arrowWidth / 2) * 
 // camera the same way the overview camera fits the cabinet below —
 // pageWidth * 2 for the left+right pages either side of the spine, plus
 // clearance for the section tabs (built later, in the OPEN-BOOK section)
-// that stick out past the right page's edge.
-const openBookWidth = pageWidth * 2 + 0.3;
+// that stick out past the right page's edge. In portrait (see section
+// 7c, SINGLE-PAGE BOOK READING), only one page shows at a time instead,
+// so the reading camera fits just pageWidth there.
+const spreadBookWidth = pageWidth * 2 + 0.3;
+const singlePageWidth = pageWidth;
 const openBookHeight = pageHeight;
 
 const framingMargin = 1.2; // a little breathing room around the edges
@@ -1397,7 +1400,8 @@ const readingTarget = readingPosition.clone();
 // layout, see style.css), so this has to stay reactive, not one-time.
 function updateCameraFraming() {
   overviewCameraPos.z = fitDistance(sceneWidth, sceneHeight, framingMargin);
-  readingCameraPos.z = readingPosition.z + fitDistance(openBookWidth, openBookHeight, 1.15);
+  const readingWidth = portraitQuery.matches ? singlePageWidth : spreadBookWidth;
+  readingCameraPos.z = readingPosition.z + fitDistance(readingWidth, openBookHeight, 1.15);
 }
 updateCameraFraming();
 
@@ -1790,6 +1794,86 @@ function paperFlip(delta) {
 }
 
 // -----------------------------------------------------------------------
+// 7c. SINGLE-PAGE BOOK READING (portrait only)
+// The desktop spread below shows two facing pages at once, each one
+// squeezed to illegibility on a narrow portrait screen — this is the
+// same "one flat sheet, texture swapped on Prev/Next" approach the
+// paper view above already uses, for a book's own pages[] instead of a
+// paper's. openBook() decides which of the two this section or the
+// spread section below actually gets used, based on the screen's
+// current orientation at the moment a book is opened.
+// -----------------------------------------------------------------------
+
+const singlePageGroup = new THREE.Group();
+singlePageGroup.position.copy(readingPosition);
+singlePageGroup.visible = false;
+scene.add(singlePageGroup);
+
+const singlePageMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+let singlePageMesh = null;
+
+// Mirrors applyPageSide's placeholder handling (section 4) — a page
+// slot with no real image yet gets the same "drop PNGs here" texture
+// instead of a broken/blank plane.
+function setSinglePageTexture(page) {
+  function applyTexture(tex) {
+    singlePageMaterial.map = tex;
+    singlePageMaterial.needsUpdate = true;
+    // resize the plane to the image's real aspect ratio, capped to the
+    // book's own page dimensions, so it never stretches or overflows them
+    const aspect = tex.image.width / tex.image.height;
+    let w = pageWidth;
+    let h = w / aspect;
+    if (h > pageHeight) {
+      h = pageHeight;
+      w = h * aspect;
+    }
+    singlePageMesh.geometry.dispose();
+    singlePageMesh.geometry = new THREE.PlaneGeometry(w, h);
+  }
+
+  if (page.image) {
+    textureLoader.load(
+      page.image,
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        applyTexture(tex);
+      },
+      undefined,
+      () => applyTexture(createPagePlaceholderTexture(page.label || "?", page.color || "#e7dcc9"))
+    );
+  } else {
+    applyTexture(createPagePlaceholderTexture(page.label || "", page.color || "#e7dcc9"));
+  }
+}
+
+function updateSinglePageUI() {
+  const total = readingState.project.pages.length;
+  readingCounter.textContent = `${readingState.currentIndex + 1} / ${total}`;
+  readingPrev.disabled = readingState.currentIndex === 0;
+  readingNext.disabled = readingState.currentIndex >= total - 1;
+}
+
+function singlePageJumpTo(targetIndex) {
+  const total = readingState.project.pages.length;
+  const clamped = Math.max(0, Math.min(targetIndex, total - 1));
+  if (clamped === readingState.currentIndex) return;
+  readingState.currentIndex = clamped;
+  setSinglePageTexture(readingState.project.pages[clamped]);
+  updateSinglePageUI();
+}
+
+function singlePageNext() {
+  if (!readingState) return;
+  singlePageJumpTo(readingState.currentIndex + 1);
+}
+
+function singlePagePrev() {
+  if (!readingState) return;
+  singlePageJumpTo(readingState.currentIndex - 1);
+}
+
+// -----------------------------------------------------------------------
 // 8. OPENING / CLOSING A BOOK
 // -----------------------------------------------------------------------
 
@@ -1804,19 +1888,28 @@ scene.add(bookOpenPivot);
 
 function openBook(book) {
   activeShelfBook = book;
+  const project = book.userData.project;
+  // Decided once, at the moment the book opens — see section 7c for why
+  // portrait gets a single page at a time instead of this two-page
+  // spread: reading one page at a time is the point, so mid-read
+  // orientation changes deliberately don't retroactively switch modes.
+  const single = portraitQuery.matches;
 
-  const { pageHinges, zStep, leftCoverZ, tabs } = buildOpenBook(book.userData.project);
-  readingState = {
-    project: book.userData.project,
-    pageHinges,
-    currentIndex: 0,
-    zStep,
-    leftCoverZ,
-    tabs,
-  };
-  updateReadingUI();
+  if (single) {
+    readingState = { mode: "single", project, currentIndex: 0 };
+    if (!singlePageMesh) {
+      singlePageMesh = new THREE.Mesh(new THREE.PlaneGeometry(pageWidth, pageHeight), singlePageMaterial);
+      singlePageGroup.add(singlePageMesh);
+    }
+    setSinglePageTexture(project.pages[0]);
+    updateSinglePageUI();
+  } else {
+    const { pageHinges, zStep, leftCoverZ, tabs } = buildOpenBook(project);
+    readingState = { mode: "spread", project, pageHinges, currentIndex: 0, zStep, leftCoverZ, tabs };
+    updateReadingUI();
+  }
 
-  readingTitle.textContent = book.userData.project.title;
+  readingTitle.textContent = project.title;
   readingPanel.classList.add("visible");
   updatePreviewPanel(); // readingState is set above, so this hides the preview panel
 
@@ -1832,22 +1925,24 @@ function openBook(book) {
   // world position), then animate the pivot itself toward the reading
   // position while it rotates — the book arcs open on its binding as it
   // travels, the way a real cover swings rather than sliding over then
-  // spinning on the spot.
+  // spinning on the spot. Whichever view (spread or single-page) reveals
+  // itself the same way, partway through this same swing.
   const hingeWorldPos = book.position.clone();
   hingeWorldPos.x += bookWidth / 2;
   bookOpenPivot.position.copy(hingeWorldPos);
   bookOpenPivot.rotation.set(0, 0, 0);
   bookOpenPivot.attach(book);
 
-  openBookGroup.visible = false;
+  const revealGroup = single ? singlePageGroup : openBookGroup;
+  revealGroup.visible = false;
   gsap.to(bookOpenPivot.position, { ...readingPosition, duration: 0.55, ease: "power2.inOut" });
   gsap.to(bookOpenPivot.rotation, {
     y: Math.PI,
     duration: 0.55,
     ease: "power2.inOut",
     onUpdate: function () {
-      if (!openBookGroup.visible && this.progress() > 0.5) {
-        openBookGroup.visible = true;
+      if (!revealGroup.visible && this.progress() > 0.5) {
+        revealGroup.visible = true;
       }
     },
     onComplete: () => {
@@ -1861,7 +1956,7 @@ function openBook(book) {
   });
 
   // See the matching comment in openPaperView — expands #app to full
-  // width in portrait so the open spread has room to be legible, and
+  // width in portrait so the open view has room to be legible, and
   // refits readingCameraPos to that box before it's captured below.
   document.body.classList.add("reading-active");
   refitCameraFraming();
@@ -1877,8 +1972,9 @@ function closeBook() {
 
   // mirror the opening transition: the pages linger a moment while the
   // real book reappears (still turned away) and rotates back closed
+  const revealGroup = readingState?.mode === "single" ? singlePageGroup : openBookGroup;
   gsap.delayedCall(0.15, () => {
-    openBookGroup.visible = false;
+    revealGroup.visible = false;
   });
 
   document.body.classList.remove("reading-active");
@@ -1945,8 +2041,8 @@ const readingPrev = document.getElementById("reading-prev");
 const readingNext = document.getElementById("reading-next");
 const readingClose = document.getElementById("reading-close");
 
-readingPrev.addEventListener("click", flipPrev);
-readingNext.addEventListener("click", flipNext);
+readingPrev.addEventListener("click", () => (readingState?.mode === "single" ? singlePagePrev() : flipPrev()));
+readingNext.addEventListener("click", () => (readingState?.mode === "single" ? singlePageNext() : flipNext()));
 readingClose.addEventListener("click", closeBook);
 
 const paperPanel = document.getElementById("paper-panel");
@@ -2022,6 +2118,20 @@ function onClick(event) {
   }
 
   setPointerFromEvent(event);
+
+  if (readingState && readingState.mode === "single") {
+    const hits = raycaster.intersectObject(singlePageMesh);
+    if (hits.length === 0) {
+      // clicked past the page entirely — treat it like closing the book
+      closeBook();
+      return;
+    }
+    // did the ray land left or right of the page's own centerline?
+    const localPoint = singlePageGroup.worldToLocal(hits[0].point.clone());
+    if (localPoint.x >= 0) singlePageNext();
+    else singlePagePrev();
+    return;
+  }
 
   if (readingState) {
     if (readingState.tabs.length > 0) {
@@ -2116,7 +2226,10 @@ function onPointerUp(event) {
   dragStart = null;
 
   if (Math.abs(dx) >= swipeThreshold && Math.abs(dx) > Math.abs(dy)) {
-    if (readingState) {
+    if (readingState?.mode === "single") {
+      if (dx < 0) singlePageNext();
+      else singlePagePrev();
+    } else if (readingState) {
       if (dx < 0) flipNext();
       else flipPrev();
     } else if (paperReadingState) {
@@ -2184,7 +2297,7 @@ function onPointerMove(event) {
   // movement while reading — orbiting/hover-peek stay off until you close.
   // Tab hover still works, since it's not fighting the drag for meaning.
   if (readingState || paperReadingState) {
-    if (readingState && readingState.tabs.length > 0 && !dragStart) {
+    if (readingState && readingState.mode === "spread" && readingState.tabs.length > 0 && !dragStart) {
       setPointerFromEvent(event);
       const tabHits = raycaster.intersectObjects(readingState.tabs);
       setHoveredTab(tabHits.length > 0 ? tabHits[0].object : null);
