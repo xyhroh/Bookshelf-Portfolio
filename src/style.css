@@ -1,0 +1,232 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #ffffff;
+  font-family: system-ui, sans-serif;
+}
+
+/* The renderer clears to transparent (see main.js section 1), so the
+   canvas has to sit ABOVE the hero text in stacking order for the shelf
+   to visually overlap/occlude it — otherwise "behind" would just mean
+   invisible. #app is given its own stacking context so a plain z-index
+   on the canvas's parent is enough; no change needed on the canvas itself. */
+#app {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+canvas {
+  display: block;
+}
+
+/* ---------------------------------------------------------------
+   The hero text, stacked and left-aligned: a lead-in phrase on top and
+   a rotating role beneath it (pulled from public/roles.txt — see
+   main.js section 1b; edit that text file and refresh to change the
+   words, no code editing required). One flex column (not two
+   independently-positioned divs) so both lines share the same left
+   edge and read as a single sentence broken across two lines — the
+   role is bigger and bolder for emphasis, but close enough in
+   scale/weight/color to still feel like one voice. Both sit BEHIND the
+   3D canvas (z-index below #app), so the shelf overlaps them like a
+   background element.
+   --------------------------------------------------------------- */
+
+#hero {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 4vw;
+  pointer-events: none;
+}
+
+#intro-left,
+#intro-right {
+  color: #2a2c2f;
+  font-family: inherit;
+  line-height: 1.2;
+  text-align: left;
+}
+
+#intro-left {
+  flex: none;
+  font-size: clamp(20px, 2.4vw, 32px);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+#intro-right {
+  flex: none;
+  min-width: 0; /* without this, a flex item won't wrap past its own
+                   content width even with max-width set, and a long role
+                   name would overflow off-screen instead of wrapping */
+  max-width: 42vw;
+}
+
+#intro-role {
+  display: inline-block;
+  font-weight: 700;
+  font-size: clamp(32px, 4.4vw, 64px);
+  letter-spacing: -0.01em;
+  color: #2a2c2f;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+#intro-role.swapping {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------
+   The per-shelf blurb, mirroring #hero on the right: a header and a
+   body paragraph, sourced from that bookshelf's own info.txt (see
+   main.js section 2) and swapped by updateShelfInfoPanel() whenever the
+   carousel brings a different shelf to the front. Right-anchored as a
+   block (so it stays clear of the shelf in the middle of the screen),
+   but the text inside reads left-aligned rather than ragged-right.
+   Both lines get the SAME explicit width (not just a max-width) so they
+   share one left edge — with a shrink-to-fit width, flex-end alignment
+   collapses each line's box down to its own content, leaving text-align
+   nothing to actually do and letting a short header drift away from a
+   longer body's left edge.
+   --------------------------------------------------------------- */
+
+#shelf-info {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  /* extra right-side padding (vs #hero's 4vw) so this block — and the
+     shelf silhouette it needs to clear — has room to sit apart from the
+     cabinet as it swings through the middle of the screen */
+  padding: 0 6vw;
+  pointer-events: none;
+}
+
+#shelf-info-header,
+#shelf-info-body {
+  width: 26vw;
+  text-align: left;
+}
+
+#shelf-info-header {
+  margin: 0;
+  color: #2a2c2f;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: clamp(26px, 3.2vw, 44px);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+#shelf-info-body {
+  margin: 0;
+  color: #55585c;
+  font-family: inherit;
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.5;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+#shelf-info.swapping #shelf-info-header,
+#shelf-info.swapping #shelf-info-body {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------
+   The reading toolbar. Pages themselves render in the 3D scene now
+   (see the open-book section of main.js) — this bar just shows the
+   title and gives reliable Prev/Next/Close buttons alongside the
+   "click a page directly" interaction.
+   --------------------------------------------------------------- */
+
+#reading-panel,
+#paper-panel,
+#preview-panel {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: rgba(250, 250, 248, 0.97);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 14px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  text-align: center;
+  z-index: 20;
+}
+
+#reading-panel.visible,
+#paper-panel.visible,
+#preview-panel.visible {
+  display: block;
+}
+
+#paper-title,
+#reading-title {
+  margin: 0 0 10px;
+  color: #202225;
+  font-size: 18px;
+}
+
+#preview-title {
+  color: #202225;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#reading-controls,
+#paper-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#reading-controls button,
+#paper-controls button {
+  border: none;
+  background: #2f3438;
+  color: #f5f5f3;
+  padding: 8px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#reading-controls button:hover,
+#paper-controls button:hover {
+  background: #23272a;
+}
+
+#reading-controls button:disabled,
+#paper-controls button:disabled {
+  background: #bcbcba;
+  cursor: default;
+}
+
+#reading-counter,
+#paper-counter {
+  color: #55585c;
+  font-size: 13px;
+}
