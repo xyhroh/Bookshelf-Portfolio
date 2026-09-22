@@ -230,3 +230,80 @@ canvas {
   color: #55585c;
   font-size: 13px;
 }
+
+/* ---------------------------------------------------------------
+   Portrait layout (phones, and an iPad held upright): the desktop
+   arrangement — hero and shelf-info floating left/right of a full-bleed,
+   centered canvas — reads badly on a narrow-tall screen, so #main-row
+   (see index.html) becomes a real flex row instead: the hero moves to a
+   top banner, the canvas keeps the left column, and the shelf blurb
+   takes the right column beside it. #main-row is `display: contents` by
+   default (see above the media query) so it's invisible to layout on
+   desktop — both children stay exactly as they were.
+
+   While a book/paper is open (main.js toggles body.reading-active), the
+   canvas takes the full width instead — the open-book spread needs the
+   room to be legible, which is the whole point of this layout pass.
+   --------------------------------------------------------------- */
+
+#main-row {
+  display: contents;
+}
+
+@media (orientation: portrait) {
+  body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  #hero {
+    position: static;
+    top: auto;
+    transform: none;
+    justify-content: flex-start;
+    padding: 18px 5vw 10px;
+    flex: none;
+  }
+
+  #intro-right {
+    max-width: 100%;
+  }
+
+  #main-row {
+    display: flex;
+    flex: 1;
+    min-height: 0; /* let #app/#shelf-info size within the remaining space instead of overflowing it */
+  }
+
+  #app {
+    position: static;
+    inset: auto;
+    flex: 0 0 55%;
+    min-width: 0;
+  }
+
+  #shelf-info {
+    position: static;
+    top: auto;
+    transform: none;
+    flex: 1;
+    min-width: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 20px 5vw;
+  }
+
+  #shelf-info-header,
+  #shelf-info-body {
+    width: 100%;
+  }
+
+  body.reading-active #app {
+    flex-basis: 100%;
+  }
+
+  body.reading-active #shelf-info {
+    display: none;
+  }
+}
