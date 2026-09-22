@@ -24,7 +24,16 @@
          and both children stay independently `position: fixed` exactly as
          before. -->
     <div id="main-row">
-      <div id="app"></div>
+      <!-- Portrait-only carousel controls (hidden on desktop by default
+           — see .nav-arrow in style.css); the floor-mounted 3D arrows
+           main.js draws into the scene are hidden in portrait in favor
+           of these, since they're fiddly to tap precisely on a touch
+           screen. Children of #app so they can hug ITS edges via
+           position: absolute, wherever that column ends up. -->
+      <div id="app">
+        <button id="nav-prev" class="nav-arrow" type="button" aria-label="Previous shelf">&#8249;</button>
+        <button id="nav-next" class="nav-arrow" type="button" aria-label="Next shelf">&#8250;</button>
+      </div>
 
       <!-- Mirrors #hero on the opposite side: a per-bookshelf blurb,
            sourced from that shelf's own info.txt (see main.js section 2)

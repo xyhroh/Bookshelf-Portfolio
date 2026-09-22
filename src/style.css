@@ -235,19 +235,58 @@ canvas {
    Portrait layout (phones, and an iPad held upright): the desktop
    arrangement — hero and shelf-info floating left/right of a full-bleed,
    centered canvas — reads badly on a narrow-tall screen, so #main-row
-   (see index.html) becomes a real flex row instead: the hero moves to a
-   top banner, the canvas keeps the left column, and the shelf blurb
-   takes the right column beside it. #main-row is `display: contents` by
-   default (see above the media query) so it's invisible to layout on
-   desktop — both children stay exactly as they were.
+   (see index.html) becomes a real flex row instead: the hero becomes a
+   centered top banner, the shelf blurb takes the left column, and the
+   canvas (the bookshelf) takes the right column, `order`ed so no HTML
+   change is needed. The blurb is vertically centered within its column
+   the same way it is on desktop (compare #shelf-info above, outside
+   this media query), just left-aligned within itself rather than
+   right-aligned, to stay readable in a narrower column. #main-row is
+   `display: contents` by default (see above the media query) so it's
+   invisible to layout on desktop — both children stay exactly as they
+   were.
 
    While a book/paper is open (main.js toggles body.reading-active), the
    canvas takes the full width instead — the open-book spread needs the
    room to be legible, which is the whole point of this layout pass.
+
+   .nav-arrow (children of #app — see index.html): the floor-mounted 3D
+   arrows are fiddly to tap precisely and main.js hides them in portrait
+   (see the portraitQuery handling there); these plain, always-in-the-
+   same-spot buttons replace them for touch.
    --------------------------------------------------------------- */
 
 #main-row {
   display: contents;
+}
+
+.nav-arrow {
+  display: none; /* shown only in portrait, below */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: #2a2c2f;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  touch-action: manipulation;
+}
+
+#nav-prev {
+  left: 10px;
+}
+
+#nav-next {
+  right: 10px;
 }
 
 @media (orientation: portrait) {
@@ -261,9 +300,15 @@ canvas {
     position: static;
     top: auto;
     transform: none;
+    align-items: center;
     justify-content: flex-start;
     padding: 18px 5vw 10px;
     flex: none;
+  }
+
+  #intro-left,
+  #intro-right {
+    text-align: center;
   }
 
   #intro-right {
@@ -277,26 +322,39 @@ canvas {
   }
 
   #app {
-    position: static;
+    position: relative; /* so .nav-arrow (absolute) hugs THIS column's edges, not the viewport's */
+    order: 2;
     inset: auto;
     flex: 0 0 55%;
     min-width: 0;
+    /* Two-finger drag would otherwise pan OrbitControls' target off the
+       shelf with no way back (see main.js, controls.enablePan = false,
+       for the matching non-portrait-specific fix) — touch-action still
+       needs to explicitly allow pinch-zoom's pan component here or Safari
+       treats the whole gesture as a page scroll instead of forwarding it
+       to OrbitControls at all. */
+    touch-action: none;
   }
 
   #shelf-info {
     position: static;
     top: auto;
     transform: none;
+    order: 1;
     flex: 1;
     min-width: 0;
     align-items: flex-start;
-    justify-content: flex-start;
+    justify-content: center; /* vertically centered alongside the shelf, same as desktop */
     padding: 20px 5vw;
   }
 
   #shelf-info-header,
   #shelf-info-body {
     width: 100%;
+  }
+
+  .nav-arrow {
+    display: flex;
   }
 
   body.reading-active #app {

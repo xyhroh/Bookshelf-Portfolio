@@ -58,6 +58,10 @@ controls.enableDamping = true;
 controls.minDistance = 1.5;
 controls.maxDistance = 12;
 controls.maxPolarAngle = Math.PI / 1.9;
+// A two-finger drag (or right-click drag on desktop) would otherwise pan
+// the orbit target off the shelf entirely, with no way to get it back —
+// this is a lookaround piece, not a pannable scene.
+controls.enablePan = false;
 
 // Capped to a shallow peek around dead-ahead (the camera's default
 // azimuth is 0, facing +Z toward the shelf) — wide enough to feel like
@@ -1238,6 +1242,26 @@ const prevArrow = createArrowMesh(-1);
 const nextArrow = createArrowMesh(1);
 const carouselArrows = [prevArrow, nextArrow];
 
+// In portrait (see style.css), these floor-mounted 3D arrows are small
+// and easy to miss-tap, so #nav-prev/#nav-next — plain always-in-the-
+// same-spot DOM buttons docked to the canvas's edges — take over as the
+// actual carousel controls there, and these hide rather than compete
+// with them. matchMedia (not just the resize listener in section 12)
+// so a device that fires "orientationchange" without a matching resize
+// still gets caught.
+const portraitQuery = window.matchMedia("(orientation: portrait)");
+function updateArrowVisibility() {
+  const portrait = portraitQuery.matches;
+  carouselArrows.forEach((arrow) => {
+    arrow.visible = !portrait;
+  });
+}
+updateArrowVisibility();
+portraitQuery.addEventListener("change", updateArrowVisibility);
+
+document.getElementById("nav-prev").addEventListener("click", () => navigateCarousel(-1));
+document.getElementById("nav-next").addEventListener("click", () => navigateCarousel(1));
+
 // Pushes back any book pulled partway out and closes the drawer on a
 // shelf that's about to swing away from the front, so it always cycles
 // back around in a clean, closed state rather than however it was left.
@@ -1959,8 +1983,14 @@ const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
 function setPointerFromEvent(event) {
-  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-  pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  // Normalized against the canvas's own box, not window.innerWidth/Height
+  // — #app isn't always the full viewport (portrait layout, see
+  // style.css), so raycasts computed against the window would land
+  // wrong wherever #app is offset or narrower than it, e.g. every arrow
+  // and book click missing on the portrait layout.
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
 }
 
@@ -2205,6 +2235,7 @@ function refitCameraFraming() {
 // toward either framing, so this snaps straight to whichever applies.
 function handleViewportResize() {
   refitCameraFraming();
+  updateArrowVisibility();
   if (readingState || paperReadingState) {
     camera.position.copy(readingCameraPos);
     controls.target.copy(readingTarget);
