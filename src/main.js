@@ -665,14 +665,36 @@ const textureLoader = new THREE.TextureLoader();
 // segment keeps left-to-right reading order correct once flipped.
 function applyPageSide(innerMaterial, outerMaterial, page, reversed) {
   function useTexture(tex) {
+    // The two mesh segments together are a fixed pageWidth x pageHeight
+    // box, but a source page image rarely matches that aspect exactly
+    // (a landscape slide vs. a portrait-ish page) — mapping the WHOLE
+    // image onto that box regardless stretched it to fit, which is what
+    // read as slightly distorted/warped text. Crop instead of stretch:
+    // center-crop the source to pageWidth:pageHeight ("cover", like CSS
+    // background-size: cover) before slicing that crop in half, so nothing
+    // in it ever changes proportions, only how much of the edges show.
+    const imageAspect = tex.image.width / tex.image.height;
+    const targetAspect = pageWidth / pageHeight;
+    let repeatX = 1;
+    let repeatY = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    if (imageAspect > targetAspect) {
+      repeatX = targetAspect / imageAspect;
+      offsetX = (1 - repeatX) / 2;
+    } else {
+      repeatY = imageAspect / targetAspect;
+      offsetY = (1 - repeatY) / 2;
+    }
+
     const leftHalf = tex.clone();
     leftHalf.needsUpdate = true;
-    leftHalf.repeat.set(0.5, 1);
-    leftHalf.offset.set(0, 0);
+    leftHalf.repeat.set(repeatX * 0.5, repeatY);
+    leftHalf.offset.set(offsetX, offsetY);
     const rightHalf = tex.clone();
     rightHalf.needsUpdate = true;
-    rightHalf.repeat.set(0.5, 1);
-    rightHalf.offset.set(0.5, 0);
+    rightHalf.repeat.set(repeatX * 0.5, repeatY);
+    rightHalf.offset.set(offsetX + repeatX * 0.5, offsetY);
     innerMaterial.map = reversed ? rightHalf : leftHalf;
     innerMaterial.needsUpdate = true;
     outerMaterial.map = reversed ? leftHalf : rightHalf;
@@ -1408,6 +1430,33 @@ updateCameraFraming();
 camera.position.copy(overviewCameraPos);
 controls.target.copy(overviewTarget);
 
+// While reading (a book spread/single page, or a paper), a one-finger
+// drag has to stay free for swipe-to-flip — see the activePointers
+// guard in section 11b — so rotate stays off the same as before. But
+// zooming in to actually read fine print is genuinely useful, so zoom
+// (scroll wheel, or a two-finger pinch) stays live instead of the whole
+// of `controls` just being switched off. minDistance is pulled in much
+// closer than the overview ever needs; maxDistance is capped relative
+// to THIS open's own reading distance (not a flat number) since that
+// distance itself depends on aspect and single-page-vs-spread mode —
+// see updateCameraFraming above — so scrolling out only ever backs off
+// a little from wherever the page currently sits, never drifting into
+// the rest of the scene.
+function enterReadingControls() {
+  controls.enabled = true;
+  controls.enableRotate = false;
+  controls.enableZoom = true;
+  controls.minDistance = 0.4;
+  controls.maxDistance = readingCameraPos.z - readingTarget.z + 1.5;
+}
+
+function exitReadingControls() {
+  controls.enabled = true;
+  controls.enableRotate = true;
+  controls.minDistance = 1.5;
+  controls.maxDistance = 12;
+}
+
 const openBookGroup = new THREE.Group();
 openBookGroup.position.copy(readingPosition);
 openBookGroup.visible = false;
@@ -1758,14 +1807,15 @@ function openPaperView(paper) {
   updatePaperUI();
   paperPanel.classList.add("visible");
   paperViewGroup.visible = true;
-  controls.enabled = false;
 
   // In portrait (see style.css), body.reading-active expands #app from
   // its usual left column to the full width — the open view needs the
   // room to be legible. refitCameraFraming() picks that new box up
-  // before the tween below captures readingCameraPos as its end value.
+  // before both the tween below (captures readingCameraPos as its end
+  // value) and enterReadingControls (bases maxDistance on it).
   document.body.classList.add("reading-active");
   refitCameraFraming();
+  enterReadingControls();
 
   gsap.to(camera.position, { ...readingCameraPos, duration: 0.8, ease: "power2.inOut" });
   gsap.to(controls.target, { ...readingTarget, duration: 0.8, ease: "power2.inOut" });
@@ -1775,7 +1825,7 @@ function closePaperView() {
   paperPanel.classList.remove("visible");
   paperViewGroup.visible = false;
   paperReadingState = null;
-  controls.enabled = true;
+  exitReadingControls();
 
   document.body.classList.remove("reading-active");
   refitCameraFraming();
@@ -1913,10 +1963,6 @@ function openBook(book) {
   readingPanel.classList.add("visible");
   updatePreviewPanel(); // readingState is set above, so this hides the preview panel
 
-  // orbiting the camera while a book is open would fight with dragging a
-  // page to flip it, so it's off for the whole time the book is open
-  controls.enabled = false;
-
   // Swing the book open on its own spine instead of spinning it in place:
   // put a pivot at the book's spine-side edge, reparent the book onto it
   // (attach() preserves its current world transform, so nothing jumps —
@@ -1957,9 +2003,12 @@ function openBook(book) {
 
   // See the matching comment in openPaperView — expands #app to full
   // width in portrait so the open view has room to be legible, and
-  // refits readingCameraPos to that box before it's captured below.
+  // refits readingCameraPos to that box before both the tween below
+  // (captures it as its end value) and enterReadingControls (bases
+  // maxDistance on it).
   document.body.classList.add("reading-active");
   refitCameraFraming();
+  enterReadingControls();
 
   gsap.to(camera.position, { ...readingCameraPos, duration: 0.55, ease: "power2.inOut" });
   gsap.to(controls.target, { ...readingTarget, duration: 0.55, ease: "power2.inOut" });
@@ -1967,7 +2016,7 @@ function openBook(book) {
 
 function closeBook() {
   readingPanel.classList.remove("visible");
-  controls.enabled = true;
+  exitReadingControls();
   setHoveredTab(null); // reset any tab left mid-glow/scaled from hovering
 
   // mirror the opening transition: the pages linger a moment while the
@@ -2202,24 +2251,38 @@ renderer.domElement.addEventListener("click", onClick);
 
 // -----------------------------------------------------------------------
 // 11b. SWIPE-TO-FLIP
-// While a book or paper is open, OrbitControls is disabled (see
-// openBook()/openPaperView()) so a drag on the page is free to mean
+// While a book or paper is open, OrbitControls' rotate is disabled (see
+// enterReadingControls) so a one-finger drag on the page is free to mean
 // "turn the page" instead of "orbit the camera" — dragging left/right
 // past a small threshold flips forward/back, same as a real swipe on a
 // phone book-reader app. A plain click (no real movement) still falls
 // through to onClick()'s left/right-of-spine tap-to-flip.
+//
+// Zoom stays live during reading (see enterReadingControls), which on
+// touch means a two-finger pinch — activePointers is what keeps THAT
+// from also being read as a swipe: a second finger joining cancels the
+// in-progress drag rather than letting its eventual pointerup measure a
+// (usually large, accidental) dx from whichever finger happened to
+// land second.
 // -----------------------------------------------------------------------
 
 let dragStart = null;
 let suppressNextClick = false;
 const swipeThreshold = 40;
+const activePointers = new Set();
 
 function onPointerDown(event) {
+  activePointers.add(event.pointerId);
   if (!readingState && !paperReadingState) return;
+  if (activePointers.size > 1) {
+    dragStart = null;
+    return;
+  }
   dragStart = { x: event.clientX, y: event.clientY };
 }
 
 function onPointerUp(event) {
+  activePointers.delete(event.pointerId);
   if (!dragStart) return;
   const dx = event.clientX - dragStart.x;
   const dy = event.clientY - dragStart.y;
@@ -2242,6 +2305,7 @@ function onPointerUp(event) {
 
 renderer.domElement.addEventListener("pointerdown", onPointerDown);
 renderer.domElement.addEventListener("pointerup", onPointerUp);
+renderer.domElement.addEventListener("pointercancel", (event) => activePointers.delete(event.pointerId));
 
 // -----------------------------------------------------------------------
 // 11c. TAB HOVER + ARROW HOVER

@@ -308,9 +308,10 @@ canvas {
     justify-content: flex-start;
     text-align: center;
     flex: none;
-    /* env() covers a notch; the flat 20px is what actually clears a
-       mobile browser's own address bar sitting on top of the hero. */
-    padding: calc(env(safe-area-inset-top, 0px) + 20px) 6vw 12px;
+    /* env() covers a notch; the flat 56px is what actually clears a
+       mobile browser's own address bar sitting on top of the hero, with
+       some extra breathing room below it. */
+    padding: calc(env(safe-area-inset-top, 0px) + 56px) 6vw 12px;
   }
 
   #intro-left,
