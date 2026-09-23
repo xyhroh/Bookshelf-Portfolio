@@ -356,8 +356,17 @@ canvas {
     display: flex;
   }
 
+  /* While reading, #app breaks out of the #main-row flex flow entirely
+     and covers the full viewport (same as it always does on desktop) —
+     #main-row only ever gives #app the row BELOW the hero banner, so a
+     zoomed-in page could only ever fill down to that row's own top
+     edge, reading as cut off by the hero sitting above it. z-index
+     above #hero's (1) so the page actually covers it, not just reaches
+     behind it. */
   body.reading-active #app {
-    flex-basis: 100%;
+    position: fixed;
+    inset: 0;
+    z-index: 15;
   }
 
   body.reading-active #shelf-info {
