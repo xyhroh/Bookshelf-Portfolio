@@ -1,5 +1,15 @@
 # Portfolio Bookshelf — Starter
 
+**Two pages:** `index.html` is the home page (headline, draggable lanyard
+badge, featured project cards) and `library.html` is the bookshelf, reached
+by "View my library of works ->". Everything below about shelves, books and
+`src/main.js` is the library page.
+
+- **Lanyard images:** replace `card-front`, `card-back`, `strap` in
+  `src/home/lanyard/` (see the README there; `card-template.png` is the blank).
+- **Featured cards:** one folder per card in `src/home/projects/` — a
+  `card.json` plus an optional `image.png`. See the README there.
+
 A working prototype: a carousel of wooden shelves, each always at
 least 2 rows tall, that fills each row from the left before wrapping
 to the next. Click a book to pull it forward, click it again to open

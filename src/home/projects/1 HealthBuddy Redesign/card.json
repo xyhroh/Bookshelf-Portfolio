@@ -1,0 +1,14 @@
+{
+  "title": "HealthBuddy Redesign",
+  "description": "Redesigning a public healthcare app that's more accessible and convenient for outpatients and elderly, backed up by user research and data.",
+  "feedback": {
+    "label": "Key user feedback:",
+    "text": "Survey respondents struggled to book an appointment without hassle due to a cluttered homescreen, so that became the primary action."
+  },
+  "stats": [
+    { "value": "16", "label": "survey respondents" },
+    { "value": "3", "label": "personas designed for" },
+    { "value": "50%", "label": "found the old app confusing" }
+  ],
+  "button": { "label": "Read case study →", "link": "library.html" }
+}

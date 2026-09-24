@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookshelf Portfolio — Prototype</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <a id="home-link" href="./">&larr; Home</a>
+
+    <!-- Sits behind the (transparent-background) 3D canvas — see the
+         renderer alpha setup in main.js section 1 — so the shelf visually
+         overlaps this text wherever the two intersect. One flex row (not
+         two independently-centered divs) so both halves share a baseline
+         and read as a single sentence split by the shelf. In portrait
+         (see style.css), this becomes a top banner instead. -->
+    <div id="hero">
+      <div id="intro-left">Hi there! I'm Javier a</div>
+      <div id="intro-right"><span id="intro-role"></span></div>
+    </div>
+
+    <!-- #app and #shelf-info are wrapped together only so portrait layout
+         (style.css) can lay them out side by side as a left/right split;
+         in the default desktop layout this wrapper is `display: contents`
+         and both children stay independently `position: fixed` exactly as
+         before. -->
+    <div id="main-row">
+      <!-- Portrait-only carousel controls (hidden on desktop by default
+           — see .nav-arrow in style.css); the floor-mounted 3D arrows
+           main.js draws into the scene are hidden in portrait in favor
+           of these, since they're fiddly to tap precisely on a touch
+           screen. Children of #app so they hug ITS edges via
+           position: absolute, wherever that column ends up. -->
+      <div id="app">
+        <button id="nav-prev" class="nav-arrow" type="button" aria-label="Previous shelf">&#8249;</button>
+        <button id="nav-next" class="nav-arrow" type="button" aria-label="Next shelf">&#8250;</button>
+      </div>
+
+      <!-- Mirrors #hero on the opposite side: a per-bookshelf blurb,
+           sourced from that shelf's own info.txt (see main.js section 2)
+           — swaps automatically whenever the carousel brings a different
+           shelf to the front. -->
+      <div id="shelf-info">
+        <h2 id="shelf-info-header"></h2>
+        <p id="shelf-info-body"></p>
+      </div>
+    </div>
+
+    <div id="preview-panel">
+      <span id="preview-title"></span>
+    </div>
+
+    <div id="reading-panel">
+      <h2 id="reading-title"></h2>
+      <div id="reading-controls">
+        <button id="reading-prev">&larr; Prev</button>
+        <span id="reading-counter"></span>
+        <button id="reading-next">Next &rarr;</button>
+        <button id="reading-close">Close</button>
+      </div>
+    </div>
+
+    <div id="paper-panel">
+      <h2 id="paper-title"></h2>
+      <div id="paper-controls">
+        <button id="paper-prev">&larr; Prev</button>
+        <span id="paper-counter"></span>
+        <button id="paper-next">Next &rarr;</button>
+        <button id="paper-close">Close</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

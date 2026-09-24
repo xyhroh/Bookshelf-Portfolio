@@ -1,0 +1,226 @@
+:root {
+  --ink: #0d0d0d;
+  --accent: #3447f5;
+  --muted: #6b6b6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--ink);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+/* ---------- hero: headline left, lanyard right ---------- */
+
+.hero {
+  position: relative;
+  min-height: 700px;
+  max-width: 1300px; /* same column as <main> so the left edges line up */
+  margin: 0 auto;
+  padding: 170px 5vw 0;
+}
+
+.hero h1 {
+  max-width: 780px;
+  margin: 0;
+  font-family: Montserrat, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(40px, 4.8vw, 72px);
+  line-height: 1.2;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+/* The canvas fills this box and is transparent; the badge hangs from above
+   its top edge. Sized in one place so the physics scene needs no layout math. */
+#lanyard {
+  position: absolute;
+  top: 0;
+  right: -1vw;
+  bottom: 0;
+  width: clamp(340px, 34vw, 520px);
+}
+
+/* ---------- featured projects ---------- */
+
+main {
+  padding: 0 5vw 140px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.section-label {
+  margin: 0 0 56px;
+  font-family: Montserrat, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#projects {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.project {
+  display: grid;
+  grid-template-columns: 45fr 55fr;
+  min-height: 590px;
+  overflow: hidden;
+  border-radius: 32px;
+  background: #fff;
+  box-shadow: 0 14px 22px -8px rgba(0, 0, 0, 0.32);
+}
+
+.project-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 44px;
+}
+
+.project h3 {
+  margin: 0 0 8px;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.project-desc {
+  margin: 0 0 22px;
+  max-width: 380px;
+  font-size: 14px;
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+}
+
+.project-feedback {
+  margin: 0 0 56px;
+  padding: 12px 14px;
+  background: #d9d9d9;
+  border-left: 3px solid #8a8a8a;
+  border-radius: 4px 12px 12px 4px;
+}
+
+.project-feedback strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.project-feedback p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: 0.03em;
+}
+
+.project-stats {
+  display: flex;
+  gap: 32px;
+  margin: 0 0 30px;
+  padding-top: 26px;
+  border-top: 1px solid #ddd;
+}
+
+.project-stats strong {
+  display: block;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.project-stats span {
+  display: block;
+  max-width: 110px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: #9a9a9a;
+}
+
+.project-button {
+  align-self: flex-start;
+  padding: 14px 22px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.project-button:hover {
+  background: #2a2a2a;
+}
+
+/* Right-hand panel: the gradient shows until/unless image.png is dropped in. */
+.project-image {
+  display: block;
+  background: linear-gradient(135deg, #eceefd 0%, #f6f6f8 55%, #f1f1ef 100%);
+}
+
+.project-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+a.project-image:hover img {
+  opacity: 0.94;
+}
+
+.library-link {
+  display: block;
+  margin-top: 56px;
+  text-align: right;
+  font-family: Montserrat, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.library-link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- narrow screens: lanyard on top, cards stack ---------- */
+
+@media (max-width: 860px) {
+  .hero {
+    padding-top: 0;
+    min-height: 0;
+  }
+  #lanyard {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 460px;
+  }
+  .hero h1 {
+    margin-top: 12px;
+  }
+  main {
+    padding-top: 56px;
+  }
+  .project {
+    grid-template-columns: 1fr;
+  }
+  .project-image {
+    min-height: 260px;
+  }
+}
