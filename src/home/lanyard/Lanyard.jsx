@@ -15,6 +15,7 @@ import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, useTexture } from "@react-three/drei";
 import {
   BallCollider,
+  interactionGroups,
   CuboidCollider,
   Physics,
   RigidBody,
@@ -36,10 +37,14 @@ const strapImage = pick(import.meta.glob("./strap.{png,jpg,jpeg,webp}", { eager:
 const CARD_W = 1.6;
 const CARD_H = 2.25;
 const CARD_RADIUS = 0.12;
-// The strap is three rope links. A longer strap lets the badge be dragged further
-// sideways, because it can only ever swing on an arc around the pin.
+// The strap is three rope links hanging from a pin above the top of the screen.
+// The pin is kinematic: it sits at HOME, but while the badge is dragged farther
+// than the strap can reach, the pin is pulled along behind it (see useFrame), so
+// the badge can go anywhere and the strap never has to stretch.
 const LINK = 1.5;
 const MAX_REACH = LINK * 3 - 0.15; // full strap length, minus a little slack
+const HOME = new THREE.Vector3(0, 1 + LINK * 3, 0);
+const NO_COLLISIONS = interactionGroups(1, []); // strap links pass through the badge
 
 const cardShape = (() => {
   const w = CARD_W, h = CARD_H, r = CARD_RADIUS, x = -w / 2, y = -h / 2;
@@ -70,12 +75,19 @@ const faceMaterialProps = { clearcoat: 1, clearcoatRoughness: 0.15, roughness: 0
 
 function Band() {
   const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
-  const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
+  const pinTo = new THREE.Vector3(), vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
   const segmentProps = { type: "dynamic", canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 };
   const [front, back, strap] = useTexture([cardFront, cardBack, strapImage]);
   const { width, height } = useThree((state) => state.size);
   const [curve] = useState(
-    () => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()])
+    () =>
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+      ])
   );
   const [dragged, drag] = useState(false);
   const [hovered, hover] = useState(false);
@@ -109,23 +121,27 @@ function Band() {
       dir.copy(vec).sub(state.camera.position).normalize();
       vec.copy(state.camera.position).add(dir.multiplyScalar(-state.camera.position.z / dir.z)); // onto the z=0 plane
       [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
-      // Keep the badge within the strap's reach. Dragging it further would make the kinematic
-      // badge fight the rope joints, which is what made the strap jitter and tear at the clamp.
       vec.sub(dragged);
-      const pin = fixed.current.translation();
-      dir.set(vec.x - pin.x, vec.y + anchorY - pin.y, vec.z - pin.z);
-      if (dir.length() > MAX_REACH) {
-        dir.setLength(MAX_REACH);
-        vec.set(pin.x + dir.x, pin.y + dir.y - anchorY, pin.z + dir.z);
-      }
+      // pull the pin along whenever the badge is dragged past the strap's reach
+      dir.set(vec.x, vec.y + anchorY, vec.z).sub(HOME);
+      const len = dir.length();
+      pinTo.copy(HOME);
+      if (len > MAX_REACH) pinTo.addScaledVector(dir, 1 - MAX_REACH / len);
+      fixed.current?.setNextKinematicTranslation(pinTo);
       card.current?.setNextKinematicTranslation(vec);
+    } else if (fixed.current && pinTo.copy(fixed.current.translation()).distanceTo(HOME) > 0.001) {
+      // let go: the pin eases back home while the badge swings back down
+      pinTo.lerp(HOME, Math.min(1, delta * 4));
+      fixed.current.setNextKinematicTranslation(pinTo);
     }
     if (fixed.current) {
       curve.points[0].copy(j3.current.translation());
       curve.points[1].copy(j2.current.translation());
       curve.points[2].copy(j1.current.translation());
       curve.points[3].copy(fixed.current.translation());
-      band.current.geometry.setPoints(curve.getPoints(32));
+      // keep the strap running off the top of the screen even when the pin has been pulled down
+      curve.points[4].copy(curve.points[3]).addScaledVector(dir.copy(curve.points[3]).sub(curve.points[2]).normalize(), 6);
+      band.current.geometry.setPoints(curve.getPoints(64));
       // ease the badge's spin back toward facing the screen
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
@@ -144,15 +160,15 @@ function Band() {
     <>
       {/* the chain starts above the top of the canvas, so the strap enters from off-screen */}
       <group position={[0, 1 + LINK * 3, 0]}>
-        <RigidBody ref={fixed} {...segmentProps} type="fixed" />
+        <RigidBody ref={fixed} {...segmentProps} type="kinematicPosition" />
         <RigidBody position={[LINK * 0.5, 0, 0]} ref={j1} {...segmentProps}>
-          <BallCollider args={[0.1]} />
+          <BallCollider args={[0.1]} collisionGroups={NO_COLLISIONS} />
         </RigidBody>
         <RigidBody position={[LINK, 0, 0]} ref={j2} {...segmentProps}>
-          <BallCollider args={[0.1]} />
+          <BallCollider args={[0.1]} collisionGroups={NO_COLLISIONS} />
         </RigidBody>
         <RigidBody position={[LINK * 1.5, 0, 0]} ref={j3} {...segmentProps}>
-          <BallCollider args={[0.1]} />
+          <BallCollider args={[0.1]} collisionGroups={NO_COLLISIONS} />
         </RigidBody>
         <RigidBody position={[LINK * 2, 0, 0]} ref={card} {...segmentProps} type={dragged ? "kinematicPosition" : "dynamic"}>
           <CuboidCollider args={[CARD_W / 2, CARD_H / 2, 0.01]} />

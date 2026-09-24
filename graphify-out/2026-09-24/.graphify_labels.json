@@ -1,9 +1,9 @@
 {
   "0": "main.js",
-  "1": "package.json",
+  "1": "Lanyard.jsx",
   "2": "onClick",
   "3": "buildBookshelf",
-  "4": "onPointerMove",
+  "4": "refitCameraFraming",
   "5": "buildProjectsForShelf",
   "6": "ensureOpenBookBuilt",
   "7": "Portfolio Bookshelf — Starter",

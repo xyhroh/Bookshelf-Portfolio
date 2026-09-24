@@ -57,11 +57,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "band()",
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L67"
+      "source_location": "L71"
+    },
+    {
+      "id": "src_home_lanyard_lanyard_camerarig",
+      "label": "CameraRig()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "Lanyard.jsx",
+      "file_type": "code",
+      "norm_label": "camerarig()",
+      "source_file": "src/home/lanyard/Lanyard.jsx",
+      "source_location": "L208"
     },
     {
       "id": "src_home_lanyard_lanyard_pick",
@@ -69,7 +81,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "pick()",
       "source_file": "src/home/lanyard/Lanyard.jsx",
@@ -472,6 +484,18 @@
       "source_location": "L1052"
     },
     {
+      "id": "src_main_buildopenbook",
+      "label": "buildOpenBook()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "buildBookshelf",
+      "file_type": "code",
+      "norm_label": "buildopenbook()",
+      "source_file": "src/main.js",
+      "source_location": "L1575"
+    },
+    {
       "id": "src_main_createspinetexture",
       "label": "createSpineTexture()",
       "_callable": true,
@@ -520,6 +544,30 @@
       "source_location": "L1303"
     },
     {
+      "id": "src_main_onpointermove",
+      "label": "onPointerMove()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "buildBookshelf",
+      "file_type": "code",
+      "norm_label": "onpointermove()",
+      "source_file": "src/main.js",
+      "source_location": "L2359"
+    },
+    {
+      "id": "src_main_pushback",
+      "label": "pushBack()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "buildBookshelf",
+      "file_type": "code",
+      "norm_label": "pushback()",
+      "source_file": "src/main.js",
+      "source_location": "L2068"
+    },
+    {
       "id": "src_main_resetshelfinteractionstate",
       "label": "resetShelfInteractionState()",
       "_callable": true,
@@ -544,6 +592,42 @@
       "source_location": "L534"
     },
     {
+      "id": "src_main_sethoveredarrow",
+      "label": "setHoveredArrow()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "buildBookshelf",
+      "file_type": "code",
+      "norm_label": "sethoveredarrow()",
+      "source_file": "src/main.js",
+      "source_location": "L2344"
+    },
+    {
+      "id": "src_main_setpointerfromevent",
+      "label": "setPointerFromEvent()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "buildBookshelf",
+      "file_type": "code",
+      "norm_label": "setpointerfromevent()",
+      "source_file": "src/main.js",
+      "source_location": "L2141"
+    },
+    {
+      "id": "src_main_updatepreviewpanel",
+      "label": "updatePreviewPanel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "buildBookshelf",
+      "file_type": "code",
+      "norm_label": "updatepreviewpanel()",
+      "source_file": "src/main.js",
+      "source_location": "L2118"
+    },
+    {
       "id": "src_main_updateshelfinfopanel",
       "label": "updateShelfInfoPanel()",
       "_callable": true,
@@ -561,7 +645,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "closebook()",
       "source_file": "src/main.js",
@@ -573,7 +657,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "closepaperview()",
       "source_file": "src/main.js",
@@ -585,7 +669,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "exitreadingcontrols()",
       "source_file": "src/main.js",
@@ -597,7 +681,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "fitdistance()",
       "source_file": "src/main.js",
@@ -609,7 +693,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "getviewportsize()",
       "source_file": "src/main.js",
@@ -621,7 +705,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "handleviewportresize()",
       "source_file": "src/main.js",
@@ -633,35 +717,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "hovertab()",
       "source_file": "src/main.js",
       "source_location": "L2321"
-    },
-    {
-      "id": "src_main_onpointermove",
-      "label": "onPointerMove()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "onPointerMove",
-      "file_type": "code",
-      "norm_label": "onpointermove()",
-      "source_file": "src/main.js",
-      "source_location": "L2359"
-    },
-    {
-      "id": "src_main_pushback",
-      "label": "pushBack()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "onPointerMove",
-      "file_type": "code",
-      "norm_label": "pushback()",
-      "source_file": "src/main.js",
-      "source_location": "L2068"
     },
     {
       "id": "src_main_refitcameraframing",
@@ -669,23 +729,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "refitcameraframing()",
       "source_file": "src/main.js",
       "source_location": "L2414"
-    },
-    {
-      "id": "src_main_sethoveredarrow",
-      "label": "setHoveredArrow()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "onPointerMove",
-      "file_type": "code",
-      "norm_label": "sethoveredarrow()",
-      "source_file": "src/main.js",
-      "source_location": "L2344"
     },
     {
       "id": "src_main_sethoveredtab",
@@ -693,23 +741,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "sethoveredtab()",
       "source_file": "src/main.js",
       "source_location": "L2335"
-    },
-    {
-      "id": "src_main_setpointerfromevent",
-      "label": "setPointerFromEvent()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "onPointerMove",
-      "file_type": "code",
-      "norm_label": "setpointerfromevent()",
-      "source_file": "src/main.js",
-      "source_location": "L2141"
     },
     {
       "id": "src_main_unhovertab",
@@ -717,7 +753,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "unhovertab()",
       "source_file": "src/main.js",
@@ -729,7 +765,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "updatearrowvisibility()",
       "source_file": "src/main.js",
@@ -741,23 +777,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "onPointerMove",
+      "community_name": "refitCameraFraming",
       "file_type": "code",
       "norm_label": "updatecameraframing()",
       "source_file": "src/main.js",
       "source_location": "L1423"
-    },
-    {
-      "id": "src_main_updatepreviewpanel",
-      "label": "updatePreviewPanel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "onPointerMove",
-      "file_type": "code",
-      "norm_label": "updatepreviewpanel()",
-      "source_file": "src/main.js",
-      "source_location": "L2118"
     },
     {
       "id": "src_main_applycoverwrap",
@@ -938,18 +962,6 @@
       "norm_label": "buildleaves()",
       "source_file": "src/main.js",
       "source_location": "L743"
-    },
-    {
-      "id": "src_main_buildopenbook",
-      "label": "buildOpenBook()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "ensureOpenBookBuilt",
-      "file_type": "code",
-      "norm_label": "buildopenbook()",
-      "source_file": "src/main.js",
-      "source_location": "L1575"
     },
     {
       "id": "src_main_buildtabs",
@@ -1845,7 +1857,7 @@
       "label": "package.json",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "package.json",
       "source_file": "package.json",
@@ -1856,7 +1868,7 @@
       "label": "devDependencies",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "devdependencies",
       "source_file": "package.json",
@@ -1867,7 +1879,7 @@
       "label": "vite",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "vite",
       "source_file": "package.json",
@@ -1878,7 +1890,7 @@
       "label": "name",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "name",
       "source_file": "package.json",
@@ -1889,7 +1901,7 @@
       "label": "private",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "private",
       "source_file": "package.json",
@@ -1900,7 +1912,7 @@
       "label": "scripts",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "scripts",
       "source_file": "package.json",
@@ -1911,7 +1923,7 @@
       "label": "build",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "package.json",
@@ -1922,7 +1934,7 @@
       "label": "dev",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "dev",
       "source_file": "package.json",
@@ -1933,7 +1945,7 @@
       "label": "preview",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "preview",
       "source_file": "package.json",
@@ -1944,7 +1956,7 @@
       "label": "type",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "type",
       "source_file": "package.json",
@@ -1955,7 +1967,7 @@
       "label": "version",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "version",
       "source_file": "package.json",
@@ -1966,7 +1978,7 @@
       "label": "Lanyard.jsx",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "lanyard.jsx",
       "source_file": "src/home/lanyard/Lanyard.jsx",
@@ -1977,7 +1989,7 @@
       "label": "cardBack",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "cardback",
       "source_file": "src/home/lanyard/Lanyard.jsx",
@@ -1988,7 +2000,7 @@
       "label": "cardFront",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "cardfront",
       "source_file": "src/home/lanyard/Lanyard.jsx",
@@ -1999,51 +2011,62 @@
       "label": "cardShape",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "cardshape",
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L40"
+      "source_location": "L44"
     },
     {
       "id": "src_home_lanyard_lanyard_coregeometry",
       "label": "coreGeometry",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "coregeometry",
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L62"
+      "source_location": "L66"
     },
     {
       "id": "src_home_lanyard_lanyard_facegeometry",
       "label": "faceGeometry",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "facegeometry",
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L57"
+      "source_location": "L61"
     },
     {
       "id": "src_home_lanyard_lanyard_facematerialprops",
       "label": "faceMaterialProps",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "facematerialprops",
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L65"
+      "source_location": "L69"
+    },
+    {
+      "id": "src_home_lanyard_lanyard_homebox",
+      "label": "homeBox",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "Lanyard.jsx",
+      "file_type": "code",
+      "norm_label": "homebox",
+      "source_file": "src/home/lanyard/Lanyard.jsx",
+      "source_location": "L206"
     },
     {
       "id": "src_home_lanyard_lanyard_strapimage",
       "label": "strapImage",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "strapimage",
       "source_file": "src/home/lanyard/Lanyard.jsx",
@@ -2054,7 +2077,7 @@
       "label": "vite.config.js",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "code",
       "norm_label": "vite.config.js",
       "source_file": "vite.config.js",
@@ -2065,7 +2088,7 @@
       "label": "gsap",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "gsap",
       "source_file": "package.json",
@@ -2076,7 +2099,7 @@
       "label": "meshline",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "meshline",
       "source_file": "package.json",
@@ -2087,7 +2110,7 @@
       "label": "react",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "react",
       "source_file": "package.json",
@@ -2098,7 +2121,7 @@
       "label": "react-dom",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "react-dom",
       "source_file": "package.json",
@@ -2109,7 +2132,7 @@
       "label": "@react-three/drei",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "@react-three/drei",
       "source_file": "package.json",
@@ -2120,7 +2143,7 @@
       "label": "@react-three/fiber",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "@react-three/fiber",
       "source_file": "package.json",
@@ -2131,7 +2154,7 @@
       "label": "@react-three/rapier",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "@react-three/rapier",
       "source_file": "package.json",
@@ -2142,7 +2165,7 @@
       "label": "three",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "three",
       "source_file": "package.json",
@@ -2153,7 +2176,7 @@
       "label": "vite",
       "_origin": "ast",
       "community": 1,
-      "community_name": "package.json",
+      "community_name": "Lanyard.jsx",
       "file_type": "concept",
       "norm_label": "vite",
       "source_file": "package.json",
@@ -2420,19 +2443,7 @@
       "node_kind": "heading",
       "norm_label": "how the pieces fit together",
       "source_file": "README.md",
-      "source_location": "L112"
-    },
-    {
-      "id": "readme_how_the_project_is_organized",
-      "label": "How the project is organized",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "buildBookshelf",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "how the project is organized",
-      "source_file": "README.md",
-      "source_location": "L93"
+      "source_location": "L122"
     },
     {
       "id": "src_main_shelfnames",
@@ -2478,7 +2489,7 @@
       "node_kind": "heading",
       "norm_label": "adding real pages (no code editing required)",
       "source_file": "README.md",
-      "source_location": "L27"
+      "source_location": "L37"
     },
     {
       "id": "readme_deploying_for_grading",
@@ -2490,7 +2501,7 @@
       "node_kind": "heading",
       "norm_label": "deploying for grading",
       "source_file": "README.md",
-      "source_location": "L163"
+      "source_location": "L173"
     },
     {
       "id": "readme_editing_the_intro_line",
@@ -2502,7 +2513,7 @@
       "node_kind": "heading",
       "norm_label": "editing the intro line",
       "source_file": "README.md",
-      "source_location": "L77"
+      "source_location": "L87"
     },
     {
       "id": "readme_editing_the_per_shelf_blurb",
@@ -2514,7 +2525,7 @@
       "node_kind": "heading",
       "norm_label": "editing the per-shelf blurb",
       "source_file": "README.md",
-      "source_location": "L84"
+      "source_location": "L94"
     },
     {
       "id": "readme_grouping_pages_into_sticky_tabs",
@@ -2526,7 +2537,19 @@
       "node_kind": "heading",
       "norm_label": "grouping pages into sticky tabs",
       "source_file": "README.md",
-      "source_location": "L58"
+      "source_location": "L68"
+    },
+    {
+      "id": "readme_how_the_project_is_organized",
+      "label": "How the project is organized",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "Portfolio Bookshelf \u2014 Starter",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "how the project is organized",
+      "source_file": "README.md",
+      "source_location": "L103"
     },
     {
       "id": "readme_known_simplifications_worth_knowing_about_not_bugs",
@@ -2538,7 +2561,7 @@
       "node_kind": "heading",
       "norm_label": "known simplifications (worth knowing about, not bugs)",
       "source_file": "README.md",
-      "source_location": "L141"
+      "source_location": "L151"
     },
     {
       "id": "readme_portfolio_bookshelf_starter",
@@ -2562,7 +2585,7 @@
       "node_kind": "heading",
       "norm_label": "running it",
       "source_file": "README.md",
-      "source_location": "L11"
+      "source_location": "L21"
     },
     {
       "id": "readme_suggested_build_order_from_here",
@@ -2574,7 +2597,7 @@
       "node_kind": "heading",
       "norm_label": "suggested build order from here",
       "source_file": "README.md",
-      "source_location": "L150"
+      "source_location": "L160"
     },
     {
       "id": "package_dependencies",
@@ -4640,95 +4663,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L58",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_portfolio_bookshelf_starter",
-      "target": "readme_running_it",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_portfolio_bookshelf_starter",
-      "target": "readme_how_the_pieces_fit_together",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L112",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_portfolio_bookshelf_starter",
-      "target": "readme_known_simplifications_worth_knowing_about_not_bugs",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L141",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_portfolio_bookshelf_starter",
-      "target": "readme_suggested_build_order_from_here",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L150",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_portfolio_bookshelf_starter",
-      "target": "readme_deploying_for_grading",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L163",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_portfolio_bookshelf_starter",
-      "target": "readme_adding_real_pages_no_code_editing_required",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L27",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_portfolio_bookshelf_starter",
-      "target": "readme_editing_the_intro_line",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L77",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_portfolio_bookshelf_starter",
-      "target": "readme_editing_the_per_shelf_blurb",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L84",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -4739,7 +4674,95 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L93",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_portfolio_bookshelf_starter",
+      "target": "readme_how_the_pieces_fit_together",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_portfolio_bookshelf_starter",
+      "target": "readme_known_simplifications_worth_knowing_about_not_bugs",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_portfolio_bookshelf_starter",
+      "target": "readme_suggested_build_order_from_here",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_portfolio_bookshelf_starter",
+      "target": "readme_deploying_for_grading",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_portfolio_bookshelf_starter",
+      "target": "readme_running_it",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_portfolio_bookshelf_starter",
+      "target": "readme_adding_real_pages_no_code_editing_required",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_portfolio_bookshelf_starter",
+      "target": "readme_editing_the_intro_line",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_portfolio_bookshelf_starter",
+      "target": "readme_editing_the_per_shelf_blurb",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -4799,6 +4822,28 @@
     },
     {
       "source": "src_home_lanyard_lanyard",
+      "target": "src_home_lanyard_lanyard_homebox",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/home/lanyard/Lanyard.jsx",
+      "source_location": "L206",
+      "weight": 1.0
+    },
+    {
+      "source": "src_home_lanyard_lanyard",
+      "target": "src_home_lanyard_lanyard_camerarig",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/home/lanyard/Lanyard.jsx",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "src_home_lanyard_lanyard",
       "target": "src_home_lanyard_lanyard_pick",
       "relation": "contains",
       "_origin": "ast",
@@ -4849,7 +4894,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L40",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -4860,7 +4905,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L57",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -4871,7 +4916,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L62",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -4882,7 +4927,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L65",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -4893,7 +4938,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L67",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -6512,7 +6557,7 @@
       "confidence_score": 0.95,
       "context": "buildBookshelf()",
       "source_file": "README.md",
-      "source_location": "L128",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -6524,7 +6569,7 @@
       "confidence_score": 0.95,
       "context": "buildOpenBook()",
       "source_file": "README.md",
-      "source_location": "L134",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -6536,7 +6581,7 @@
       "confidence_score": 0.95,
       "context": "createSpineTexture()",
       "source_file": "README.md",
-      "source_location": "L120",
+      "source_location": "L130",
       "weight": 1.0
     },
     {
@@ -6548,7 +6593,7 @@
       "confidence_score": 0.95,
       "context": "navigateCarousel()",
       "source_file": "README.md",
-      "source_location": "L131",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
@@ -6560,10 +6605,10 @@
       "confidence_score": 0.95,
       "context": "navigateCarousel()",
       "source_file": "README.md",
-      "source_location": "L108",
+      "source_location": "L118",
       "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a14f593d76e4811859232e4461a03b3b7470d7af"
+  "built_at_commit": "91b303717a47b3c23957783e9cca45af12d6a196"
 }
