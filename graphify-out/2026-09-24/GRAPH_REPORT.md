@@ -1,26 +1,26 @@
 # Graph Report - Bookshelf-Portfolio  (2026-09-24)
 
 ## Corpus Check
-- 25 files · ~478,300 words
+- 25 files · ~477,954 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 3 file(s) not represented in the graph (top: .css 2, (none) 1)
 
 ## Summary
-- 238 nodes · 337 edges · 30 communities (10 shown, 20 thin omitted)
+- 236 nodes · 335 edges · 30 communities (10 shown, 20 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `91b30371`
+- Built from commit: `a14f593d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - main.js
-- Lanyard.jsx
+- package.json
 - onClick
 - buildBookshelf
-- refitCameraFraming
+- onPointerMove
 - buildProjectsForShelf
 - ensureOpenBookBuilt
 - Portfolio Bookshelf — Starter
@@ -48,13 +48,13 @@
 ## Surprising Connections (you probably didn't know these)
 - `How the project is organized` --references--> `navigateCarousel()`  [INFERRED]
   README.md → src/main.js
+- `How the pieces fit together` --references--> `buildOpenBook()`  [INFERRED]
+  README.md → src/main.js
 - `How the pieces fit together` --references--> `createSpineTexture()`  [INFERRED]
   README.md → src/main.js
 - `How the pieces fit together` --references--> `buildBookshelf()`  [INFERRED]
   README.md → src/main.js
 - `How the pieces fit together` --references--> `navigateCarousel()`  [INFERRED]
-  README.md → src/main.js
-- `How the pieces fit together` --references--> `buildOpenBook()`  [INFERRED]
   README.md → src/main.js
 
 ## Import Cycles
@@ -66,33 +66,33 @@
 Cohesion: 0.03
 Nodes (70): activePointers, appEl, backWoodGrain, backWoodMaterial, bookOpenPivot, camera, carouselArrows, carouselGroup (+62 more)
 
-### Community 1 - "Lanyard.jsx"
-Cohesion: 0.07
-Nodes (27): devDependencies, vite, name, private, scripts, build, dev, preview (+19 more)
+### Community 1 - "package.json"
+Cohesion: 0.08
+Nodes (26): devDependencies, vite, name, private, scripts, build, dev, preview (+18 more)
 
 ### Community 2 - "onClick"
 Cohesion: 0.16
 Nodes (19): animateFlip(), createPagePlaceholderTexture(), enterReadingControls(), flipNext(), flipPrev(), jumpToIndex(), onClick(), onPointerUp() (+11 more)
 
 ### Community 3 - "buildBookshelf"
-Cohesion: 0.14
-Nodes (21): How the pieces fit together, buildBookshelf(), closeDrawer(), openDrawer(), peekDrawer(), slideDrawerTo(), unpeekDrawer(), buildOpenBook() (+13 more)
-
-### Community 4 - "refitCameraFraming"
 Cohesion: 0.18
-Nodes (12): closeBook(), closePaperView(), exitReadingControls(), fitDistance(), getViewportSize(), handleViewportResize(), hoverTab(), refitCameraFraming() (+4 more)
+Nodes (16): How the pieces fit together, How the project is organized, buildBookshelf(), closeDrawer(), openDrawer(), peekDrawer(), slideDrawerTo(), unpeekDrawer() (+8 more)
+
+### Community 4 - "onPointerMove"
+Cohesion: 0.13
+Nodes (17): closeBook(), closePaperView(), exitReadingControls(), fitDistance(), getViewportSize(), handleViewportResize(), hoverTab(), onPointerMove() (+9 more)
 
 ### Community 5 - "buildProjectsForShelf"
 Cohesion: 0.18
 Nodes (13): applyCoverWrap(), slice(), buildInfoForShelf(), buildPapersForShelf(), buildProjectsForShelf(), coverForFolder(), leadingNumber(), naturalCompare() (+5 more)
 
 ### Community 6 - "ensureOpenBookBuilt"
-Cohesion: 0.20
-Nodes (9): applyLeafContent(), applyPageSide(), buildLeaves(), buildTabs(), createTabTexture(), createTitlePageTexture(), ensureOpenBookBuilt(), pullOut() (+1 more)
+Cohesion: 0.18
+Nodes (10): applyLeafContent(), applyPageSide(), buildLeaves(), buildOpenBook(), buildTabs(), createTabTexture(), createTitlePageTexture(), ensureOpenBookBuilt() (+2 more)
 
 ### Community 7 - "Portfolio Bookshelf — Starter"
-Cohesion: 0.18
-Nodes (10): Adding real pages (no code editing required), Deploying for grading, Editing the intro line, Editing the per-shelf blurb, Grouping pages into sticky tabs, How the project is organized, Known simplifications (worth knowing about, not bugs), Portfolio Bookshelf — Starter (+2 more)
+Cohesion: 0.20
+Nodes (9): Adding real pages (no code editing required), Deploying for grading, Editing the intro line, Editing the per-shelf blurb, Grouping pages into sticky tabs, Known simplifications (worth knowing about, not bugs), Portfolio Bookshelf — Starter, Running it (+1 more)
 
 ### Community 8 - "dependencies"
 Cohesion: 0.22
@@ -103,17 +103,17 @@ Cohesion: 0.43
 Nodes (6): buildCard(), cardFiles, el(), imageFiles, link(), projects
 
 ## Knowledge Gaps
-- **107 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+102 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 137 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **106 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+101 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 135 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `three` connect `Lanyard.jsx` to `main.js`?**
-  _High betweenness centrality (0.165) - this node is a cross-community bridge._
-- **Why does `gsap` connect `Lanyard.jsx` to `main.js`?**
-  _High betweenness centrality (0.079) - this node is a cross-community bridge._
+- **Why does `three` connect `package.json` to `main.js`?**
+  _High betweenness centrality (0.155) - this node is a cross-community bridge._
+- **Why does `gsap` connect `package.json` to `main.js`?**
+  _High betweenness centrality (0.080) - this node is a cross-community bridge._
 - **Why does `Portfolio Bookshelf — Starter` connect `Portfolio Bookshelf — Starter` to `buildBookshelf`?**
   _High betweenness centrality (0.066) - this node is a cross-community bridge._
 - **Are the 5 inferred relationships involving `buildBookshelf()` (e.g. with `How the pieces fit together` and `closeDrawer()`) actually correct?**
@@ -121,6 +121,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 2 inferred relationships involving `navigateCarousel()` (e.g. with `How the pieces fit together` and `How the project is organized`) actually correct?**
   _`navigateCarousel()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `private`, `version` to the rest of the system?**
-  _107 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _106 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `main.js` be split into smaller, more focused modules?**
   _Cohesion score 0.02666666666666667 - nodes in this community are weakly interconnected._

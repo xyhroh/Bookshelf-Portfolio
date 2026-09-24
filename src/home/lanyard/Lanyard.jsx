@@ -36,7 +36,10 @@ const strapImage = pick(import.meta.glob("./strap.{png,jpg,jpeg,webp}", { eager:
 const CARD_W = 1.6;
 const CARD_H = 2.25;
 const CARD_RADIUS = 0.12;
-const MAX_REACH = 2.85; // 3 rope links of length 1, minus a little slack
+// The strap is three rope links. A longer strap lets the badge be dragged further
+// sideways, because it can only ever swing on an arc around the pin.
+const LINK = 1.5;
+const MAX_REACH = LINK * 3 - 0.15; // full strap length, minus a little slack
 
 const cardShape = (() => {
   const w = CARD_W, h = CARD_H, r = CARD_RADIUS, x = -w / 2, y = -h / 2;
@@ -65,7 +68,7 @@ coreGeometry.translate(0, 0, -0.01);
 
 const faceMaterialProps = { clearcoat: 1, clearcoatRoughness: 0.15, roughness: 0.3, metalness: 0.5 };
 
-function Band({ maxSpeed = 50, minSpeed = 10 }) {
+function Band() {
   const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
   const segmentProps = { type: "dynamic", canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 };
@@ -80,9 +83,9 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
   // where the last rope link meets the badge: just above its top edge, on the clamp
   const anchorY = CARD_H / 2 + 0.1;
 
-  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
+  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], LINK]);
+  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], LINK]);
+  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], LINK]);
   useSphericalJoint(j3, card, [[0, 0, 0], [0, anchorY, 0]]);
 
   useEffect(() => {
@@ -118,15 +121,9 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
       card.current?.setNextKinematicTranslation(vec);
     }
     if (fixed.current) {
-      // smooth the two middle links so over-pulling the badge doesn't jitter the strap
-      const [j1Lerped, j2Lerped] = [j1, j2].map((ref) => {
-        if (!ref.current.lerped) ref.current.lerped = new THREE.Vector3().copy(ref.current.translation());
-        const clampedDistance = Math.max(0.1, Math.min(1, ref.current.lerped.distanceTo(ref.current.translation())));
-        return ref.current.lerped.lerp(ref.current.translation(), delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed)));
-      });
       curve.points[0].copy(j3.current.translation());
-      curve.points[1].copy(j2Lerped);
-      curve.points[2].copy(j1Lerped);
+      curve.points[1].copy(j2.current.translation());
+      curve.points[2].copy(j1.current.translation());
       curve.points[3].copy(fixed.current.translation());
       band.current.geometry.setPoints(curve.getPoints(32));
       // ease the badge's spin back toward facing the screen
@@ -146,18 +143,18 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
   return (
     <>
       {/* the chain starts above the top of the canvas, so the strap enters from off-screen */}
-      <group position={[0, 4, 0]}>
+      <group position={[0, 1 + LINK * 3, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
-        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
+        <RigidBody position={[LINK * 0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
+        <RigidBody position={[LINK, 0, 0]} ref={j2} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+        <RigidBody position={[LINK * 1.5, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? "kinematicPosition" : "dynamic"}>
+        <RigidBody position={[LINK * 2, 0, 0]} ref={card} {...segmentProps} type={dragged ? "kinematicPosition" : "dynamic"}>
           <CuboidCollider args={[CARD_W / 2, CARD_H / 2, 0.01]} />
           <group
             onPointerOver={() => hover(true)}
@@ -178,7 +175,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
               <meshPhysicalMaterial map={back} {...faceMaterialProps} />
             </mesh>
             <mesh position={[0, CARD_H / 2 + 0.02, 0]}>
-              <boxGeometry args={[0.36, 0.2, 0.05]} />
+              <boxGeometry args={[0.5, 0.2, 0.05]} />
               <meshStandardMaterial color="#111" roughness={0.35} metalness={0.8} />
             </mesh>
           </group>
@@ -193,7 +190,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
           useMap
           map={strap}
           repeat={[-3, 1]}
-          lineWidth={1.6}
+          lineWidth={1.45}
         />
       </mesh>
     </>
@@ -227,7 +224,7 @@ function CameraRig() {
 createRoot(document.getElementById("lanyard-layer")).render(
   <Canvas
     camera={{ position: [0, 0, CAM_Z], fov: 25 }}
-    dpr={[1, 2]}
+    dpr={[1, 1.5]}
     gl={{ alpha: true }}
     eventSource={document.body}
     eventPrefix="client"
@@ -235,7 +232,7 @@ createRoot(document.getElementById("lanyard-layer")).render(
     <CameraRig />
     <ambientLight intensity={Math.PI} />
     <Suspense fallback={null}>
-      <Physics gravity={[0, -40, 0]} timeStep="vary">
+      <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
         <Band />
       </Physics>
     </Suspense>
