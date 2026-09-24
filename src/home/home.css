@@ -38,14 +38,21 @@ body {
   color: var(--accent);
 }
 
-/* The canvas fills this box and is transparent; the badge hangs from above
-   its top edge. Sized in one place so the physics scene needs no layout math. */
+/* Just a marker box: the badge hangs from above its top edge, at its size.
+   The real canvas is #lanyard-layer below. */
 #lanyard {
   position: absolute;
   top: 0;
   right: -1vw;
   bottom: 0;
   width: clamp(340px, 34vw, 520px);
+}
+
+#lanyard-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
 }
 
 /* ---------- featured projects ---------- */

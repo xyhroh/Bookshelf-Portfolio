@@ -36,6 +36,7 @@ const strapImage = pick(import.meta.glob("./strap.{png,jpg,jpeg,webp}", { eager:
 const CARD_W = 1.6;
 const CARD_H = 2.25;
 const CARD_RADIUS = 0.12;
+const MAX_REACH = 2.85; // 3 rope links of length 1, minus a little slack
 
 const cardShape = (() => {
   const w = CARD_W, h = CARD_H, r = CARD_RADIUS, x = -w / 2, y = -h / 2;
@@ -91,13 +92,30 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
     }
   }, [hovered, dragged]);
 
+  // no text selection while dragging the badge across the page
+  useEffect(() => {
+    if (dragged) {
+      document.body.style.userSelect = "none";
+      return () => void (document.body.style.userSelect = "");
+    }
+  }, [dragged]);
+
   useFrame((state, delta) => {
     if (dragged) {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();
-      vec.add(dir.multiplyScalar(state.camera.position.length()));
+      vec.copy(state.camera.position).add(dir.multiplyScalar(-state.camera.position.z / dir.z)); // onto the z=0 plane
       [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
-      card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z });
+      // Keep the badge within the strap's reach. Dragging it further would make the kinematic
+      // badge fight the rope joints, which is what made the strap jitter and tear at the clamp.
+      vec.sub(dragged);
+      const pin = fixed.current.translation();
+      dir.set(vec.x - pin.x, vec.y + anchorY - pin.y, vec.z - pin.z);
+      if (dir.length() > MAX_REACH) {
+        dir.setLength(MAX_REACH);
+        vec.set(pin.x + dir.x, pin.y + dir.y - anchorY, pin.z + dir.z);
+      }
+      card.current?.setNextKinematicTranslation(vec);
     }
     if (fixed.current) {
       // smooth the two middle links so over-pulling the badge doesn't jitter the strap
@@ -182,11 +200,42 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
   );
 }
 
-createRoot(document.getElementById("lanyard")).render(
-  <Canvas camera={{ position: [0, 0, 8], fov: 25 }} dpr={[1, 2]} gl={{ alpha: true }}>
+// The canvas covers the whole viewport (a fixed, click-through layer above the
+// page) so the badge can be dragged anywhere. The #lanyard box in the hero is
+// only a marker: each frame the camera is shifted/zoomed so the badge's rest
+// spot lands on that box, at its size, and follows page scroll.
+const CAM_Z = 8;
+const HOME_VISIBLE_H = 2 * CAM_Z * Math.tan(THREE.MathUtils.degToRad(25 / 2)); // world height the box shows
+const homeBox = document.getElementById("lanyard");
+
+function CameraRig() {
+  useFrame(({ camera, size }) => {
+    const r = homeBox.getBoundingClientRect();
+    if (!r.height) return;
+    const unitsPerPx = HOME_VISIBLE_H / r.height;
+    const fov = THREE.MathUtils.radToDeg(2 * Math.atan((size.height * unitsPerPx) / 2 / CAM_Z));
+    if (camera.fov !== fov) {
+      camera.fov = fov;
+      camera.updateProjectionMatrix();
+    }
+    camera.position.x = -(r.left + r.width / 2 - size.width / 2) * unitsPerPx;
+    camera.position.y = HOME_VISIBLE_H / 2 + (r.top - size.height / 2) * unitsPerPx;
+  });
+  return null;
+}
+
+createRoot(document.getElementById("lanyard-layer")).render(
+  <Canvas
+    camera={{ position: [0, 0, CAM_Z], fov: 25 }}
+    dpr={[1, 2]}
+    gl={{ alpha: true }}
+    eventSource={document.body}
+    eventPrefix="client"
+  >
+    <CameraRig />
     <ambientLight intensity={Math.PI} />
     <Suspense fallback={null}>
-      <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
+      <Physics gravity={[0, -40, 0]} timeStep="vary">
         <Band />
       </Physics>
     </Suspense>
