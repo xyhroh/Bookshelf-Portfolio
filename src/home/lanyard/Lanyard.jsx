@@ -273,7 +273,7 @@ createRoot(document.getElementById("lanyard-layer")).render(
     <CameraRig />
     <ambientLight intensity={Math.PI} />
     <Suspense fallback={null}>
-      <Physics gravity={[0, -40, 0]} timeStep={1 / 60}>
+      <Physics gravity={[0, -40, 0]} timeStep={1 / 60} interpolate={false}>
         <Band />
       </Physics>
       <Strap />
