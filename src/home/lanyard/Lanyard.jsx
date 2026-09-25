@@ -10,7 +10,7 @@
 // badge updates on the next refresh. card-template.png shows the guides.
 import * as THREE from "three";
 import { createRoot } from "react-dom/client";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, createRef, useEffect, useRef, useState } from "react";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, useTexture } from "@react-three/drei";
 import {
@@ -73,27 +73,22 @@ coreGeometry.translate(0, 0, -0.01);
 
 const faceMaterialProps = { clearcoat: 1, clearcoatRoughness: 0.15, roughness: 0.3, metalness: 0.5 };
 
+// where the last rope link meets the badge: just above its top edge, on the clamp
+const ANCHOR_Y = CARD_H / 2 + 0.1;
+
+// The physics bodies are shared between <Band> (which owns them) and <Strap> (which draws
+// the strap and must run AFTER the physics step each frame — see <Strap>). One badge per page.
+const chain = { fixed: createRef(), j1: createRef(), j2: createRef(), j3: createRef(), card: createRef() };
+
 function Band() {
-  const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
+  const { fixed, j1, j2, j3, card } = chain;
   const pinTo = new THREE.Vector3(), vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
-  const segmentProps = { type: "dynamic", canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 };
-  const [front, back, strap] = useTexture([cardFront, cardBack, strapImage]);
-  const { width, height } = useThree((state) => state.size);
-  const [curve] = useState(
-    () =>
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-      ])
-  );
+  const segmentProps = { type: "dynamic", canSleep: false, colliders: false, angularDamping: 2, linearDamping: 2 };
+  const [front, back] = useTexture([cardFront, cardBack]);
   const [dragged, drag] = useState(false);
   const [hovered, hover] = useState(false);
 
-  // where the last rope link meets the badge: just above its top edge, on the clamp
-  const anchorY = CARD_H / 2 + 0.1;
+  const anchorY = ANCHOR_Y;
 
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], LINK]);
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], LINK]);
@@ -135,13 +130,6 @@ function Band() {
       fixed.current.setNextKinematicTranslation(pinTo);
     }
     if (fixed.current) {
-      curve.points[0].copy(j3.current.translation());
-      curve.points[1].copy(j2.current.translation());
-      curve.points[2].copy(j1.current.translation());
-      curve.points[3].copy(fixed.current.translation());
-      // keep the strap running off the top of the screen even when the pin has been pulled down
-      curve.points[4].copy(curve.points[3]).addScaledVector(dir.copy(curve.points[3]).sub(curve.points[2]).normalize(), 6);
-      band.current.geometry.setPoints(curve.getPoints(64));
       // ease the badge's spin back toward facing the screen
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
@@ -149,12 +137,10 @@ function Band() {
     }
   });
 
-  curve.curveType = "chordal";
-  [front, back, strap].forEach((t) => {
+  [front, back].forEach((t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 16;
   });
-  strap.wrapS = strap.wrapT = THREE.RepeatWrapping;
 
   return (
     <>
@@ -197,19 +183,58 @@ function Band() {
           </group>
         </RigidBody>
       </group>
-      <mesh ref={band}>
-        <meshLineGeometry />
-        <meshLineMaterial
-          color="white"
-          depthTest={false}
-          resolution={[width, height]}
-          useMap
-          map={strap}
-          repeat={[-3, 1]}
-          lineWidth={1.45}
-        />
-      </mesh>
     </>
+  );
+}
+
+// The strap: a ribbon drawn through the chain every frame. It's a separate component, placed AFTER
+// <Physics> in the tree, so its useFrame runs after the physics step (siblings subscribe in order).
+// Inside <Band> it ran before the step and drew last frame's chain against this frame's badge, and
+// with interpolation on, the badge was also drawn a fraction of a step behind the raw positions.
+// Both showed up as the strap coming loose from the clamp. Physics is now un-interpolated, so the
+// bodies' positions are exactly what's drawn. The strap's badge end is the clamp point itself
+// (not the last link), so it can't come off even if the link lags under a hard pull.
+function Strap() {
+  const band = useRef();
+  const strap = useTexture(strapImage);
+  const { width, height } = useThree((state) => state.size);
+  const [curve] = useState(() => {
+    const c = new THREE.CatmullRomCurve3(Array.from({ length: 5 }, () => new THREE.Vector3()));
+    c.curveType = "chordal";
+    return c;
+  });
+  const [quat] = useState(() => new THREE.Quaternion());
+  const [dir] = useState(() => new THREE.Vector3());
+
+  strap.colorSpace = THREE.SRGBColorSpace;
+  strap.wrapS = strap.wrapT = THREE.RepeatWrapping;
+
+  useFrame(() => {
+    const { fixed, j1, j2, card } = chain;
+    if (!fixed.current || !card.current || !band.current) return;
+    const q = card.current.rotation();
+    curve.points[0].set(0, ANCHOR_Y, 0).applyQuaternion(quat.set(q.x, q.y, q.z, q.w)).add(card.current.translation());
+    curve.points[1].copy(j2.current.translation());
+    curve.points[2].copy(j1.current.translation());
+    curve.points[3].copy(fixed.current.translation());
+    // keep the strap running off the top of the screen even when the pin has been pulled down
+    curve.points[4].copy(curve.points[3]).addScaledVector(dir.copy(curve.points[3]).sub(curve.points[2]).normalize(), 6);
+    band.current.geometry.setPoints(curve.getPoints(64));
+  });
+
+  return (
+    <mesh ref={band} frustumCulled={false}>
+      <meshLineGeometry />
+      <meshLineMaterial
+        color="white"
+        depthTest={false}
+        resolution={[width, height]}
+        useMap
+        map={strap}
+        repeat={[-3, 1]}
+        lineWidth={1.45}
+      />
+    </mesh>
   );
 }
 
@@ -248,9 +273,10 @@ createRoot(document.getElementById("lanyard-layer")).render(
     <CameraRig />
     <ambientLight intensity={Math.PI} />
     <Suspense fallback={null}>
-      <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
+      <Physics gravity={[0, -40, 0]} timeStep={1 / 60}>
         <Band />
       </Physics>
+      <Strap />
     </Suspense>
     {/* no `background` prop: only used for reflections, so the page's white shows through */}
     <Environment blur={0.75}>

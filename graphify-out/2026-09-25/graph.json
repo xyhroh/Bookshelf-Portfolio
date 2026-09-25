@@ -61,7 +61,7 @@
       "file_type": "code",
       "norm_label": "band()",
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L83"
+      "source_location": "L76"
     },
     {
       "id": "src_home_lanyard_lanyard_camerarig",
@@ -73,7 +73,7 @@
       "file_type": "code",
       "norm_label": "camerarig()",
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L249"
+      "source_location": "L224"
     },
     {
       "id": "src_home_lanyard_lanyard_pick",
@@ -86,18 +86,6 @@
       "norm_label": "pick()",
       "source_file": "src/home/lanyard/Lanyard.jsx",
       "source_location": "L31"
-    },
-    {
-      "id": "src_home_lanyard_lanyard_strap",
-      "label": "Strap()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Lanyard.jsx",
-      "file_type": "code",
-      "norm_label": "strap()",
-      "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L197"
     },
     {
       "id": "src_main_animate",
@@ -182,18 +170,6 @@
       "norm_label": "animateflip()",
       "source_file": "src/main.js",
       "source_location": "L1694"
-    },
-    {
-      "id": "src_main_createpageplaceholdertexture",
-      "label": "createPagePlaceholderTexture()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "onClick",
-      "file_type": "code",
-      "norm_label": "createpageplaceholdertexture()",
-      "source_file": "src/main.js",
-      "source_location": "L592"
     },
     {
       "id": "src_main_enterreadingcontrols",
@@ -314,30 +290,6 @@
       "norm_label": "setpaperviewtexture()",
       "source_file": "src/main.js",
       "source_location": "L1770"
-    },
-    {
-      "id": "src_main_setsinglepagetexture",
-      "label": "setSinglePageTexture()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "onClick",
-      "file_type": "code",
-      "norm_label": "setsinglepagetexture()",
-      "source_file": "src/main.js",
-      "source_location": "L1868"
-    },
-    {
-      "id": "src_main_setsinglepagetexture_applytexture",
-      "label": "applyTexture()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "onClick",
-      "file_type": "code",
-      "norm_label": "applytexture()",
-      "source_file": "src/main.js",
-      "source_location": "L1869"
     },
     {
       "id": "src_main_singlepagejumpto",
@@ -988,6 +940,18 @@
       "source_location": "L1631"
     },
     {
+      "id": "src_main_createpageplaceholdertexture",
+      "label": "createPagePlaceholderTexture()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "ensureOpenBookBuilt",
+      "file_type": "code",
+      "norm_label": "createpageplaceholdertexture()",
+      "source_file": "src/main.js",
+      "source_location": "L592"
+    },
+    {
       "id": "src_main_createtabtexture",
       "label": "createTabTexture()",
       "_callable": true,
@@ -1034,6 +998,30 @@
       "norm_label": "pullout()",
       "source_file": "src/main.js",
       "source_location": "L2052"
+    },
+    {
+      "id": "src_main_setsinglepagetexture",
+      "label": "setSinglePageTexture()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "ensureOpenBookBuilt",
+      "file_type": "code",
+      "norm_label": "setsinglepagetexture()",
+      "source_file": "src/main.js",
+      "source_location": "L1868"
+    },
+    {
+      "id": "src_main_setsinglepagetexture_applytexture",
+      "label": "applyTexture()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "ensureOpenBookBuilt",
+      "file_type": "code",
+      "norm_label": "applytexture()",
+      "source_file": "src/main.js",
+      "source_location": "L1869"
     },
     {
       "id": "src_main_wraptext",
@@ -2030,17 +2018,6 @@
       "source_location": "L49"
     },
     {
-      "id": "src_home_lanyard_lanyard_chain",
-      "label": "chain",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Lanyard.jsx",
-      "file_type": "code",
-      "norm_label": "chain",
-      "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L81"
-    },
-    {
       "id": "src_home_lanyard_lanyard_coregeometry",
       "label": "coreGeometry",
       "_origin": "ast",
@@ -2093,7 +2070,7 @@
       "file_type": "code",
       "norm_label": "homebox",
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L247"
+      "source_location": "L222"
     },
     {
       "id": "src_home_lanyard_lanyard_no_collisions",
@@ -2491,18 +2468,6 @@
       "source_location": "L122"
     },
     {
-      "id": "readme_how_the_project_is_organized",
-      "label": "How the project is organized",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "buildBookshelf",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "how the project is organized",
-      "source_file": "README.md",
-      "source_location": "L103"
-    },
-    {
       "id": "src_main_shelfnames",
       "label": "shelfNames",
       "_origin": "ast",
@@ -2595,6 +2560,18 @@
       "norm_label": "grouping pages into sticky tabs",
       "source_file": "README.md",
       "source_location": "L68"
+    },
+    {
+      "id": "readme_how_the_project_is_organized",
+      "label": "How the project is organized",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "Portfolio Bookshelf \u2014 Starter",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "how the project is organized",
+      "source_file": "README.md",
+      "source_location": "L103"
     },
     {
       "id": "readme_known_simplifications_worth_knowing_about_not_bugs",
@@ -4867,24 +4844,13 @@
     },
     {
       "source": "src_home_lanyard_lanyard",
-      "target": "src_home_lanyard_lanyard_strap",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L197",
-      "weight": 1.0
-    },
-    {
-      "source": "src_home_lanyard_lanyard",
       "target": "src_home_lanyard_lanyard_homebox",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L247",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -4895,7 +4861,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L249",
+      "source_location": "L224",
       "weight": 1.0
     },
     {
@@ -5010,24 +4976,13 @@
     },
     {
       "source": "src_home_lanyard_lanyard",
-      "target": "src_home_lanyard_lanyard_chain",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L81",
-      "weight": 1.0
-    },
-    {
-      "source": "src_home_lanyard_lanyard",
       "target": "src_home_lanyard_lanyard_band",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/home/lanyard/Lanyard.jsx",
-      "source_location": "L83",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -6699,5 +6654,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e52ce7d7154ba1053a0b86674293ecbf613071e5"
+  "built_at_commit": "0d0697989d89abcc07a113d3f7d7d168856e2fb8"
 }
